@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import confetti from "canvas-confetti"; // Import the confetti library
 import { countriesData } from "./Data/countriesData";
 import "./App.css";
@@ -15,6 +15,11 @@ function App() {
 
   const countries = Object.keys(countriesData);
 
+  // Function to play sound
+  const playSound = (soundFile) => {
+    const audio = new Audio(soundFile);
+    audio.play();
+  };
   function handleCountryChange(e) {
     setSelectedCountry(e.target.value);
     setCurrentQuestionIndex(0);
@@ -98,6 +103,36 @@ function App() {
     setShowResult(false);
     setClicked(false);
   }
+  // Play sound effect when userAnswer changes
+  useEffect(() => {
+    if (userAnswer) {
+      if (
+        userAnswer ===
+        countriesData[selectedCountry].questions[currentQuestionIndex]
+          .correctAnswer
+      ) {
+        playSound("/sounds/win.mp3"); // Correct sound file path
+      } else {
+        playSound("/sounds/error.wav"); // Wrong sound file path
+      }
+    }
+  }, [userAnswer, selectedCountry, currentQuestionIndex]);
+
+  // Function to play sound
+  const playEffect = (soundFile) => {
+    const sound = new Audio(soundFile);
+    sound.play();
+  };
+
+  useEffect(() => {
+    if (showResult) {
+      if (score === countriesData[selectedCountry].questions.length) {
+        playEffect("/sounds/game-win.mp3");
+      } else {
+        playEffect("/sounds/lose-sound.mp3");
+      }
+    }
+  }, [showResult, score, selectedCountry]);
 
   return (
     <div>
